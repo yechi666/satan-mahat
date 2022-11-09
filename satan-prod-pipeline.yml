@@ -1,0 +1,15 @@
+trigger:
+- master
+
+pool:
+  name: default
+
+variables:
+  - group: pipeline-group-prod
+  - group: pipline-group-common
+
+extends:
+  template: satan-template-pipeline.yml
+  parameters:
+      TAG: 'prod-'
+      branchName: 'prod'

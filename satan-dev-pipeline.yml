@@ -1,0 +1,15 @@
+trigger:
+- dev
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: pipeline-group-dev
+  - group: pipline-group-common
+
+extends:
+  template: satan-template-pipeline.yml
+  parameters:
+      TAG: 'dev-'
+      branchName: 'dev'
