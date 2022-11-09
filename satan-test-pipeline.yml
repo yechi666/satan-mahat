@@ -1,0 +1,15 @@
+trigger:
+- test
+
+pool:
+  name: default
+
+variables:
+  - group: pipeline-group-test
+  - group: pipline-group-common
+
+extends:
+  template: satan-template-pipeline.yml
+  parameters:
+      TAG: 'test-'
+      branchName: 'test'

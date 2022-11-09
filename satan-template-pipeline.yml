@@ -1,0 +1,32 @@
+parameters:
+  - name: TAG
+    type: string
+    default: ''
+  - name: branchName
+    type: string
+    default: 'prod'
+
+stages:
+- stage: 'build'
+  displayName: 'build-${{ parameters.branchName }}'
+  jobs:
+    - job: build
+      steps:
+        - script: |
+            build_tag=${{ parameters.branchName }}-$(date +"%F_%H_%M")-$(Build.SourceVersion)
+            docker login bsmchacr.azurecr.io -u $ACR_USERNAME -p $ACR_PASSWORD 
+            docker build \
+            -t bsmchacr.azurecr.io/toval/satan:"$build_tag" \
+            --build-arg VUE_APP_OCEAN_WS=$(VUE_APP_OCEAN_WS) \
+            --build-arg VUE_APP_OCEAN_HTTP=$(VUE_APP_OCEAN_HTTP) \
+            --build-arg VUE_APP_REDIRECT_URL=$(VUE_APP_REDIRECT_URL) \
+            --build-arg VUE_APP_TENANT_ID=$(VUE_APP_TENANT_ID) \
+            --build-arg VUE_APP_CLIENT_ID=$(VUE_APP_CLIENT_ID)  \
+            --build-arg LOGGER_URL=$(LOGGER_URL) \
+            --build-arg OUTLOOK_DOMAIN=$(OUTLOOK_DOMAIN) \
+            --build-arg OUTLOOK_SERVICE_PASSWORD=$(OUTLOOK_SERVICE_PASSWORD) \
+            --build-arg OUTLOOK_SERVICE_URL=$(OUTLOOK_SERVICE_URL) \
+            --build-arg OUTLOOK_SERVICE_USERNAME=$(OUTLOOK_SERVICE_USERNAME) .
+            docker push bsmchacr.azurecr.io/toval/satan:"$build_tag"
+            docker tag bsmchacr.azurecr.io/toval/satan:"$build_tag" bsmchacr.azurecr.io/toval/satan:"${TAG}latest"
+            docker push bsmchacr.azurecr.io/toval/satan:"${TAG}latest"
